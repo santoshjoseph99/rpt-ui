@@ -1,0 +1,29 @@
+mutation {
+  createUser(
+    data: {
+      email: "developer@example.com"
+      password: "$2a$10$hACwQ5/HQI6FhbIISOUVeusy3sKyUDhSq36fF5d/54aAdiygJPFzm" # plaintext password: "nooneknows"
+      name: "Sarah"
+      comments: {
+        create: [
+          {
+            message: "Hello World 👋"
+            isPublic: true
+            # TODO: get author from above?
+            # children: {
+            #   create: [
+            #     { message: "reply #1", isPublic: true }
+            #     { message: "reply #2", isPublic: true }
+            #   ]
+            # }
+          }
+          { message: "Comment #2", isPublic: true }
+          { message: "Testing testing 123", isPublic: true }
+          { message: "Private World", isPublic: false }
+        ]
+      }
+    }
+  ) {
+    id
+  }
+}

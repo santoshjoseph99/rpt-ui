@@ -1,0 +1,35 @@
+# import * from "./generated/prisma.graphql"
+
+type Query {
+  feed: [Comment!]!
+  comment(id: ID!): Comment
+  me: User
+}
+
+type Mutation {
+  signup(email: String!, password: String!, name: String!): AuthPayload!
+  login(email: String!, password: String!): AuthPayload!
+  createComment(
+    message: String!
+    isPublic: Boolean!
+    parentCommentId: ID
+  ): Comment!
+  editComment(id: ID!, message: String, isPublic: Boolean): Comment!
+  deleteComment(id: ID!): Comment!
+}
+
+type Subscription {
+  feedSubscription: CommentSubscriptionPayload
+}
+
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
+type User {
+  id: ID!
+  email: String!
+  name: String!
+  comments: [Comment!]!
+}
