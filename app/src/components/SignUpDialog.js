@@ -12,6 +12,7 @@ import gql from 'graphql-tag';
 const SIGNUP_MUTATION = gql`
 mutation PostMutation($email: String!, $password: String!, $name:String!) {
   signup(email: $email, password:$password, name:$name) {
+    token,
     user {
       id,
       email,
@@ -40,15 +41,18 @@ export default class SignUpDialog extends React.Component {
   signUpDone = (data) => {
     console.log('DONE:', data);
     this.setState({ open: false });
+    this.props.logIn({token: data.signup.token, user: data.signup.user });
   }
 
   signUpError = (err) => {
     console.log('ERROR:', err);
     window.alert(err);
+    this.props.logIn(false);
   }
 
   render() {
     const {email, password, name} = this.state;
+    // console.log('SIGNUP:', this.props);
     return (
       <div>
         <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>

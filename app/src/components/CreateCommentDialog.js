@@ -5,26 +5,31 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContentText from '@material-ui/core/DialogContentText';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 
-const LOGIN_MUTATION = gql`
-mutation LoginMutation($email: String!, $password: String!) {
-  login(email: $email, password:$password) {
-    token,
-    user {
-      id,
-      email,
-      name
+const CREATECOMMENT_MUTATION = gql`
+mutation CreateCommentMutation($message: String!,
+  $isPublic: Boolean!,
+	$parentCommentId:ID) {
+  createComment(message: $message, isPublic:$isPublic, parentCommentId: $parentCommentId) {
+  	id,
+    createdAt,
+    updatedAt,
+    message,
+    author {
+    	name
     }
   }
 }
 `;
-export default class LogInDialog extends React.Component {
+
+export default class CreateCommentDialog extends React.Component {
   state = {
     open: false,
-    email: '',
-    password: '',
+    message: '',
+    isPublic: true,
   };
 
   handleClickOpen = () => {
@@ -35,50 +40,41 @@ export default class LogInDialog extends React.Component {
     this.setState({ open: false });
   };
 
-  loginDone = (data) => {
-    console.log('DONE:', data);
+  createDone = (data) => {
+    console.log('CREATE:', data);
     this.setState({ open: false });
-    this.props.logIn({token: data.login.token, user: data.login.user });
   }
 
-  loginError = (err) => {
+  createError = (err) => {
     console.log('ERROR:', err);
     window.alert(err);
-    this.props.logIn(false);
   }
 
   render() {
-    const {email, password} = this.state;
+    const {message, isPublic} = this.state;
     return (
       <div>
         <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
-          Log In
+          Create New Comment
         </Button>
         <Dialog
           open={this.state.open}
           onClose={this.handleClose}
           aria-labelledby="form-dialog-title"
         >
-          <DialogTitle id="form-dialog-title">Log In</DialogTitle>
+          <DialogTitle id="form-dialog-title">Comment</DialogTitle>
+          <DialogContentText>
+            Create a new comment
+          </DialogContentText>
           <DialogContent>
             <TextField
               autoFocus
               margin="dense"
-              id="email"
-              label="Email Address"
-              type="email"
-              value={email}
-              onChange={e => this.setState({ email: e.target.value })}
-              fullWidth
-            />
-            <TextField
-              autoFocus
-              margin="dense"
-              id="password"
-              label="Password"
-              type="password"
-              value={password}
-              onChange={e => this.setState({ password: e.target.value })}
+              id="message"
+              label="Message"
+              type="text"
+              value={message}
+              onChange={e => this.setState({ message: e.target.value })}
               fullWidth
             />
           </DialogContent>
@@ -86,8 +82,8 @@ export default class LogInDialog extends React.Component {
             <Button onClick={this.handleClose} color="primary">
               Cancel
             </Button>
-            <Mutation mutation={LOGIN_MUTATION} onCompleted={this.loginDone} onError={this.loginError} variables={{ email, password }}>
-              {loginMutation => <Button onClick={loginMutation} color="primary">Log In</Button>}
+            <Mutation mutation={CREATECOMMENT_MUTATION} onCompleted={this.createDone} onError={this.createError} variables={{ message, isPublic }}>
+              {mutation => <Button onClick={mutation} color="primary">Create</Button>}
             </Mutation>
           </DialogActions>
         </Dialog>

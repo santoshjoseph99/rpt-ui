@@ -14,7 +14,7 @@ export default compose(
   withSnackbar,
   lifecycle({
     componentWillReceiveProps(nextProps) {
-      if (this.props === nextProps) {
+      if (this.props === nextProps || !nextProps.mutation) {
         return;
       }
 
