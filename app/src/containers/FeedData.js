@@ -8,6 +8,7 @@ const query = gql`
       id
       message
       createdAt
+      updatedAt
     }
   }
 `;

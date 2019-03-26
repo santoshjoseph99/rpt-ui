@@ -36,10 +36,22 @@ class TestPage extends React.Component {
   constructor() {
     super();
     this.state = {
-      loggedIn: false
+      loggedIn: false,
+      newComment: {}
     };
     this.logIn = this.logIn.bind(this);
     this.logOut = this.logOut.bind(this);
+    this.commentEdited = this.commentEdited.bind(this);
+    this.commentDeleted = this.commentDeleted.bind(this);
+    this.commentCreated = this.commentCreated.bind(this);
+  }
+
+  commentDeleted(id) {
+
+  }
+
+  commentEdited(id, message, isPublic) {
+
   }
 
   logIn(value) {
@@ -58,10 +70,22 @@ class TestPage extends React.Component {
     localStorage.removeItem('auth-token');
   }
 
+  commentCreated(comment) {
+    this.setState({
+      newComment: comment
+    })
+  }
+
   render() {
     const {classes} = this.props;
-    const {loggedIn} = this.state;
-    const newProps = {logIn: this.logIn};
+    const {loggedIn, newComment} = this.state;
+    const newProps = {
+      logIn: this.logIn,
+      commentCreated: this.commentCreated,
+      newComment: newComment,
+      commentDeleted: this.commentDeleted,
+      commentEdited: this.commentEdited
+    };
     return (
       <div className={classes.page}>
       <AppBar position="static" color="default" className={classes.appBar}>
@@ -72,10 +96,10 @@ class TestPage extends React.Component {
           {loggedIn && <Button variant="outlined" color="primary" onClick={this.logOut}>Logout</Button>}
         </Toolbar>
       </AppBar>
-      <FeedSubscriptionData>
+      {/* <FeedSubscriptionData>
         {props => <Notice {...props} />}
-      </FeedSubscriptionData>
-      <FeedData>{props => <ListComments {...props} />}</FeedData>
+      </FeedSubscriptionData> */}
+      <FeedData newComment={newComment}>{props => <ListComments {...props} />}</FeedData>
     </div>
     );
   }

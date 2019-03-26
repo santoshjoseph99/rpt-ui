@@ -3,11 +3,14 @@ import Comment from './Comment';
 import { compose } from 'recompose';
 import renderWhileLoading from '../utils/renderWhileLoading';
 
-const ListComments = ({ comments }) => (
+const ListComments = ({comments, newComment}) => {
+  // console.log('ListComments:', newComment, comments);
+  const newcomments = Object.keys(newComment).length === 0 ? comments : [newComment, ...comments];
+  return (
   <Fragment>
-    {comments &&
-      comments.map(({ id, ...comment }) => <Comment key={id} {...comment} />)}
-  </Fragment>
-);
+    {newcomments &&
+      newcomments.map(comment => <Comment key={comment.id} { ...comment} />)}
+  </Fragment>);
+};
 
 export default compose(renderWhileLoading)(ListComments);

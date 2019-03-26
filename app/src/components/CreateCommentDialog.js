@@ -8,6 +8,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
+import Checkbox from '@material-ui/core/Checkbox';
+import InputLabel from '@material-ui/core/InputLabel';
 
 const CREATECOMMENT_MUTATION = gql`
 mutation CreateCommentMutation($message: String!,
@@ -41,7 +43,10 @@ export default class CreateCommentDialog extends React.Component {
   };
 
   createDone = (data) => {
-    console.log('CREATE:', data);
+    // console.log('CREATE:', data, this.props, this.props.appState, this.props.appState.comments);
+    // this.props.appState.comments2.unshift(data.createComment);
+    this.props.commentCreated(data.createComment);
+    // this.props.comme= data.createComment;
     this.setState({ open: false });
   }
 
@@ -50,12 +55,18 @@ export default class CreateCommentDialog extends React.Component {
     window.alert(err);
   }
 
+  handleCheckbox = (e) => {
+    this.setState({
+      isPublic: false //TODO: fix
+    });
+  }
+
   render() {
     const {message, isPublic} = this.state;
     return (
       <div>
         <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
-          Create New Comment
+          New Comment
         </Button>
         <Dialog
           open={this.state.open}
@@ -64,7 +75,7 @@ export default class CreateCommentDialog extends React.Component {
         >
           <DialogTitle id="form-dialog-title">Comment</DialogTitle>
           <DialogContentText>
-            Create a new comment
+            New comment
           </DialogContentText>
           <DialogContent>
             <TextField
@@ -77,6 +88,17 @@ export default class CreateCommentDialog extends React.Component {
               onChange={e => this.setState({ message: e.target.value })}
               fullWidth
             />
+            <Checkbox
+            id="public"
+          checked={isPublic}
+          onChange={e => this.setState({isPublic: e.target.value})}
+          value={"isPublic"}
+        />
+        <InputLabel
+          htmlFor="public"
+        >
+          Public Comment
+        </InputLabel>
           </DialogContent>
           <DialogActions>
             <Button onClick={this.handleClose} color="primary">
