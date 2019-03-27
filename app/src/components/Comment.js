@@ -13,6 +13,7 @@ import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
+import EditCommentDialog from './EditCommentDialog';
 
 const DELETECOMMENT_MUTATION = gql`
 mutation DeleteComment($id: ID!) {
@@ -42,8 +43,8 @@ const styles = theme => ({
 
 const enhanced = compose(withStyles(styles));
 
-export default enhanced(({ classes, id, message, createdAt, updatedAt }) => {
-  console.log('ID:', id);
+export default enhanced(({ classes, id, message, isPublic, createdAt, updatedAt, commentDeleted, onError }) => {
+  // console.log('ID:', id);
   return (<Card className={classes.card}>
     <CardContent>
       <CardHeader
@@ -54,16 +55,14 @@ export default enhanced(({ classes, id, message, createdAt, updatedAt }) => {
         }
         action={
           <div>
-            <Mutation mutation={DELETECOMMENT_MUTATION}  variables={{ id }}>
+            <Mutation mutation={DELETECOMMENT_MUTATION} onCompleted={commentDeleted} onError={onError} variables={{ id }}>
               {mutation =>
                 <IconButton onClick={mutation}>
                   <DeleteIcon />
                 </IconButton>
               }
             </Mutation>
-            <IconButton onClick={() => console.log('edit')}>
-              <EditIcon />
-            </IconButton>
+            <EditCommentDialog message={message} isPublic={isPublic}/>
           </div>
         }
         title="updated"

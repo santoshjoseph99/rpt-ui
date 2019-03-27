@@ -37,20 +37,30 @@ class TestPage extends React.Component {
     super();
     this.state = {
       loggedIn: false,
-      newComment: {}
+      newComment: {},
+      deletedCommentId: '',
     };
     this.logIn = this.logIn.bind(this);
     this.logOut = this.logOut.bind(this);
     this.commentEdited = this.commentEdited.bind(this);
     this.commentDeleted = this.commentDeleted.bind(this);
     this.commentCreated = this.commentCreated.bind(this);
+    this.onError = this.onError.bind(this);
   }
 
-  commentDeleted(id) {
-
+  commentDeleted(obj) {
+    console.log('COMMENT DELTED:', obj);
+    this.setState({
+      deletedCommentId: obj.deleteComment.id,
+      newComment: {},
+    });
   }
 
   commentEdited(id, message, isPublic) {
+
+  }
+
+  onError(msg) {
 
   }
 
@@ -72,19 +82,22 @@ class TestPage extends React.Component {
 
   commentCreated(comment) {
     this.setState({
-      newComment: comment
+      newComment: comment,
+      deletedCommentId: '',
     })
   }
 
   render() {
     const {classes} = this.props;
-    const {loggedIn, newComment} = this.state;
+    const {loggedIn, newComment, deletedCommentId} = this.state;
     const newProps = {
       logIn: this.logIn,
       commentCreated: this.commentCreated,
       newComment: newComment,
+      deletedCommentId: deletedCommentId,
       commentDeleted: this.commentDeleted,
-      commentEdited: this.commentEdited
+      commentEdited: this.commentEdited,
+      onError: this.onError,
     };
     return (
       <div className={classes.page}>
@@ -99,7 +112,8 @@ class TestPage extends React.Component {
       {/* <FeedSubscriptionData>
         {props => <Notice {...props} />}
       </FeedSubscriptionData> */}
-      <FeedData newComment={newComment}>{props => <ListComments {...props} />}</FeedData>
+      {/* <FeedData newComment={newComment}>{props => <ListComments {...props} />}</FeedData> */}
+      <FeedData {...newProps}>{props => <ListComments {...props} />}</FeedData>
     </div>
     );
   }

@@ -10,29 +10,29 @@ import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import Checkbox from '@material-ui/core/Checkbox';
 import InputLabel from '@material-ui/core/InputLabel';
+import EditIcon from '@material-ui/icons/Edit';
+import IconButton from '@material-ui/core/IconButton';
 
-const CREATECOMMENT_MUTATION = gql`
-mutation CreateCommentMutation($message: String!,
-  $isPublic: Boolean!,
-	$parentCommentId:ID) {
-  createComment(message: $message, isPublic:$isPublic, parentCommentId: $parentCommentId) {
-  	id,
-    createdAt,
-    updatedAt,
-    message,
-    author {
-    	name
-    }
+const EDITCOMMENT_MUTATION = gql`
+mutation EditComment($id: ID!, $message:String, $isPublic: Boolean) {
+  editComment(id:$id, message:$message, isPublic:$isPublic){
+    id,
+  	message,
+    isPublic
   }
 }
 `;
 
-export default class CreateCommentDialog extends React.Component {
-  state = {
-    open: false,
-    message: '',
-    isPublic: true,
-  };
+
+export default class EditCommentDialog extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      open: false,
+      message: props.message,
+      isPublic: props.isPublic,
+    };
+  }
 
   handleClickOpen = () => {
     this.setState({ open: true });
@@ -43,7 +43,7 @@ export default class CreateCommentDialog extends React.Component {
   };
 
   createDone = (data) => {
-    this.props.commentCreated(data.createComment);
+    // this.props.commentCreated(data.createComment);
     this.setState({ open: false, message: '' });
   }
 
@@ -62,15 +62,18 @@ export default class CreateCommentDialog extends React.Component {
     const {message, isPublic} = this.state;
     return (
       <div>
-        <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
-          New Comment
-        </Button>
+            <IconButton onClick={this.handleClickOpen}>
+              <EditIcon />
+            </IconButton>
+        {/* <Button variant="outlined" color="primary" onClick={this.handleClickOpen}> */}
+          {/* Comment */}
+        {/* </Button> */}
         <Dialog
           open={this.state.open}
           onClose={this.handleClose}
           aria-labelledby="form-dialog-title"
         >
-          <DialogTitle id="form-dialog-title">New Comment</DialogTitle>
+          <DialogTitle id="form-dialog-title">Edit Comment</DialogTitle>
           <DialogContentText>
           </DialogContentText>
           <DialogContent>
@@ -100,8 +103,8 @@ export default class CreateCommentDialog extends React.Component {
             <Button onClick={this.handleClose} color="primary">
               Cancel
             </Button>
-            <Mutation mutation={CREATECOMMENT_MUTATION} onCompleted={this.createDone} onError={this.createError} variables={{ message, isPublic }}>
-              {mutation => <Button onClick={mutation} color="primary">Create</Button>}
+            <Mutation mutation={EDITCOMMENT_MUTATION} onCompleted={this.createDone} onError={this.createError} variables={{ message, isPublic }}>
+              {mutation => <Button onClick={mutation} color="primary">Save</Button>}
             </Mutation>
           </DialogActions>
         </Dialog>
