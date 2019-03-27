@@ -31,6 +31,7 @@ export default class EditCommentDialog extends React.Component {
       open: false,
       message: props.message,
       isPublic: props.isPublic,
+      id: props.id,
     };
   }
 
@@ -43,7 +44,6 @@ export default class EditCommentDialog extends React.Component {
   };
 
   createDone = (data) => {
-    // this.props.commentCreated(data.createComment);
     this.setState({ open: false, message: '' });
   }
 
@@ -59,15 +59,12 @@ export default class EditCommentDialog extends React.Component {
   }
 
   render() {
-    const {message, isPublic} = this.state;
+    const {message, isPublic, id} = this.state;
     return (
       <div>
             <IconButton onClick={this.handleClickOpen}>
               <EditIcon />
             </IconButton>
-        {/* <Button variant="outlined" color="primary" onClick={this.handleClickOpen}> */}
-          {/* Comment */}
-        {/* </Button> */}
         <Dialog
           open={this.state.open}
           onClose={this.handleClose}
@@ -103,7 +100,7 @@ export default class EditCommentDialog extends React.Component {
             <Button onClick={this.handleClose} color="primary">
               Cancel
             </Button>
-            <Mutation mutation={EDITCOMMENT_MUTATION} onCompleted={this.createDone} onError={this.createError} variables={{ message, isPublic }}>
+            <Mutation mutation={EDITCOMMENT_MUTATION} onCompleted={this.createDone} onError={this.createError} variables={{ id, message, isPublic }}>
               {mutation => <Button onClick={mutation} color="primary">Save</Button>}
             </Mutation>
           </DialogActions>

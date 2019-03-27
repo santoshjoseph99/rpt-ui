@@ -8,7 +8,6 @@ import CardHeader from '@material-ui/core/CardHeader';
 import Typography from '@material-ui/core/Typography';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ReplyIcon from '@material-ui/icons/Reply';
-import EditIcon from '@material-ui/icons/Edit';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import { Mutation } from 'react-apollo';
@@ -20,16 +19,6 @@ mutation DeleteComment($id: ID!) {
   deleteComment(id:$id){
     id,
   	message
-  }
-}
-`;
-
-const EDITCOMMENT_MUTATION = gql`
-mutation EditComment($id: ID!, $message:String, $isPublic: Boolean) {
-  editComment(id:$id, message:$message, isPublic:$isPublic){
-    id,
-  	message,
-    isPublic
   }
 }
 `;
@@ -62,7 +51,7 @@ export default enhanced(({ classes, id, message, isPublic, createdAt, updatedAt,
                 </IconButton>
               }
             </Mutation>
-            <EditCommentDialog message={message} isPublic={isPublic}/>
+            <EditCommentDialog id={id} message={message} isPublic={isPublic}/>
           </div>
         }
         title="updated"

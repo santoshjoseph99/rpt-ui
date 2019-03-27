@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import Comment from './Comment';
-import { compose, withProps } from 'recompose';
+import { compose } from 'recompose';
 import renderWhileLoading from '../utils/renderWhileLoading';
 
 const ListComments = ({comments, newComment, deletedCommentId, commentDeleted, onError, commentEdited}) => {
