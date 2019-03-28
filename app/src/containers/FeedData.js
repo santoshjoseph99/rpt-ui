@@ -10,6 +10,9 @@ const query = gql`
       message
       createdAt
       updatedAt
+      author {
+        id
+      }
     }
   }
 `;

@@ -3,7 +3,7 @@ import Comment from './Comment';
 import { compose } from 'recompose';
 import renderWhileLoading from '../utils/renderWhileLoading';
 
-const ListComments = ({comments, newComment, deletedCommentId, commentDeleted, onError, commentEdited}) => {
+const ListComments = ({comments,user, newComment, deletedCommentId, commentDeleted, onError, commentEdited}) => {
   console.log('ListComments:', newComment, comments.length);
   let newcomments;
   if(deletedCommentId) {
@@ -12,6 +12,11 @@ const ListComments = ({comments, newComment, deletedCommentId, commentDeleted, o
     newcomments = comments;
   } else {
     newcomments = Object.keys(newComment).length === 0 ? comments : [newComment, ...comments];
+  }
+  if (user.id) {
+    newcomments = newcomments.filter(x => x.isPublic || x.author.id === user.id);
+  } else {
+    newcomments = newcomments.filter(x => x.isPublic);
   }
   return (
   <Fragment>

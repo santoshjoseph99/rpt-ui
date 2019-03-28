@@ -21,7 +21,8 @@ mutation CreateCommentMutation($message: String!,
     updatedAt,
     message,
     author {
-    	name
+      name,
+      id
     }
   }
 }

@@ -37,19 +37,20 @@ class TestPage extends React.Component {
     super();
     this.state = {
       loggedIn: false,
+      user: {},
       newComment: {},
       deletedCommentId: '',
     };
-    this.logIn = this.logIn.bind(this);
-    this.logOut = this.logOut.bind(this);
-    this.commentEdited = this.commentEdited.bind(this);
-    this.commentDeleted = this.commentDeleted.bind(this);
-    this.commentCreated = this.commentCreated.bind(this);
-    this.onError = this.onError.bind(this);
+    // this.logIn = this.logIn.bind(this);
+    // this.logOut = this.logOut.bind(this);
+    // this.commentEdited = this.commentEdited.bind(this);
+    // this.commentDeleted = this.commentDeleted.bind(this);
+    // this.commentCreated = this.commentCreated.bind(this);
+    // this.onError = this.onError.bind(this);
     //TODO: read JWT token
   }
 
-  commentDeleted(obj) {
+  commentDeleted = (obj) => {
     console.log('COMMENT DELTED:', obj);
     this.setState({
       deletedCommentId: obj.deleteComment.id,
@@ -61,27 +62,31 @@ class TestPage extends React.Component {
 
   }
 
-  onError(msg) {
-
+  onError = (msg) => {
+    window.alert(msg);
   }
 
-  logIn(value) {
-    this.setState({
-      loggedIn: value ? true : false
-    });
+  logIn = (value) => {
+    if(value && value.user) {
+      this.setState({
+        loggedIn: true,
+        user: value.user
+      });
+    }
     if(value && value.token) {
       localStorage.setItem('auth-token', value.token);
     }
   }
 
-  logOut() {
+  logOut = () => {
     this.setState({
-      loggedIn: false
+      loggedIn: false,
+      user: {}
     });
     localStorage.removeItem('auth-token');
   }
 
-  commentCreated(comment) {
+  commentCreated = (comment) => {
     this.setState({
       newComment: comment,
       deletedCommentId: '',
@@ -90,7 +95,7 @@ class TestPage extends React.Component {
 
   render() {
     const {classes} = this.props;
-    const {loggedIn, newComment, deletedCommentId} = this.state;
+    const {loggedIn, newComment, deletedCommentId, user} = this.state;
     const newProps = {
       logIn: this.logIn,
       commentCreated: this.commentCreated,
@@ -99,6 +104,8 @@ class TestPage extends React.Component {
       commentDeleted: this.commentDeleted,
       commentEdited: this.commentEdited,
       onError: this.onError,
+      loggedIn: loggedIn,
+      user: user
     };
     return (
       <div className={classes.page}>

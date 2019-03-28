@@ -7,12 +7,12 @@ import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 import Typography from '@material-ui/core/Typography';
 import DeleteIcon from '@material-ui/icons/Delete';
-import ReplyIcon from '@material-ui/icons/Reply';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import EditCommentDialog from './EditCommentDialog';
+import ReplyCommentDialog from './ReplyCommentDialog';
 
 const DELETECOMMENT_MUTATION = gql`
 mutation DeleteComment($id: ID!) {
@@ -32,8 +32,11 @@ const styles = theme => ({
 
 const enhanced = compose(withStyles(styles));
 
+function formatter(str, a, b, c) {
+  return `${str} ${a} ${b} ${c}`;
+}
+
 export default enhanced(({ classes, id, message, isPublic, createdAt, updatedAt, commentDeleted, onError }) => {
-  // console.log('ID:', id);
   return (
   <Card className={classes.card}>
     <CardContent>
@@ -52,18 +55,19 @@ export default enhanced(({ classes, id, message, isPublic, createdAt, updatedAt,
                 </IconButton>
               }
             </Mutation>
-            <EditCommentDialog id={id} message={message} isPublic={isPublic}/>
+            <EditCommentDialog id={id} message={message} isPublic={!!isPublic}/>
           </div>
         }
-        title="updated"
-        subheader="created September 14, 2016"
+        title=""
+        subheader=""
       />
       <Typography variant="subtitle1" color="textSecondary" gutterBottom>
-        <TimeAgo date={createdAt} />
+        <TimeAgo date={createdAt} formatter={formatter.bind(this, "created")}/>
+        <TimeAgo date={updatedAt} formatter={formatter.bind(this, "/updated")}/>
       </Typography>
       <Typography variant="h5" component="h2">
         {message}
-        <IconButton onClick={() => console.log('reply')}><ReplyIcon /></IconButton>
+        <ReplyCommentDialog parentCommentId={id} message={message} isPublic={!!isPublic}/>
       </Typography>
     </CardContent>
   </Card>)
