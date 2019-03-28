@@ -52,17 +52,11 @@ export default class CreateCommentDialog extends React.Component {
     window.alert(err);
   }
 
-  handleCheckbox = (e) => {
-    this.setState({
-      isPublic: false //TODO: fix
-    });
-  }
-
   render() {
     const {message, isPublic} = this.state;
     return (
-      <div>
-        <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
+      <div style={{marginRight: '10px'}}>
+        <Button variant="contained" color="primary" onClick={this.handleClickOpen}>
           New Comment
         </Button>
         <Dialog
@@ -87,7 +81,7 @@ export default class CreateCommentDialog extends React.Component {
             <Checkbox
             id="public"
           checked={isPublic}
-          onChange={e => this.setState({isPublic: e.target.value})}
+          onChange={e => this.setState({isPublic: e.target.checked})}
           value={"isPublic"}
         />
         <InputLabel

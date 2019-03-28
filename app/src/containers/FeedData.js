@@ -6,6 +6,7 @@ const query = gql`
   query feed {
     feed {
       id
+      isPublic
       message
       createdAt
       updatedAt

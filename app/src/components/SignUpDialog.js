@@ -54,8 +54,8 @@ export default class SignUpDialog extends React.Component {
     const {email, password, name} = this.state;
     // console.log('SIGNUP:', this.props);
     return (
-      <div>
-        <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
+      <div style={{marginRight: '10px'}}>
+        <Button variant="contained" color="primary" onClick={this.handleClickOpen}>
           Sign Up
         </Button>
         <Dialog

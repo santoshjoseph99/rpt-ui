@@ -34,12 +34,13 @@ const enhanced = compose(withStyles(styles));
 
 export default enhanced(({ classes, id, message, isPublic, createdAt, updatedAt, commentDeleted, onError }) => {
   // console.log('ID:', id);
-  return (<Card className={classes.card}>
+  return (
+  <Card className={classes.card}>
     <CardContent>
       <CardHeader
         avatar={
           <Avatar aria-label="Recipe" className={classes.avatar}>
-            R
+            {isPublic ? 'P' : ''}
             </Avatar>
         }
         action={

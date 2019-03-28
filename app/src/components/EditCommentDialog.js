@@ -23,7 +23,6 @@ mutation EditComment($id: ID!, $message:String, $isPublic: Boolean) {
 }
 `;
 
-
 export default class EditCommentDialog extends React.Component {
   constructor(props) {
     super(props);
@@ -52,19 +51,13 @@ export default class EditCommentDialog extends React.Component {
     window.alert(err);
   }
 
-  handleCheckbox = (e) => {
-    this.setState({
-      isPublic: false //TODO: fix
-    });
-  }
-
   render() {
-    const {message, isPublic, id} = this.state;
+    const { message, isPublic, id } = this.state;
     return (
       <div>
-            <IconButton onClick={this.handleClickOpen}>
-              <EditIcon />
-            </IconButton>
+        <IconButton onClick={this.handleClickOpen}>
+          <EditIcon />
+        </IconButton>
         <Dialog
           open={this.state.open}
           onClose={this.handleClose}
@@ -85,15 +78,15 @@ export default class EditCommentDialog extends React.Component {
               fullWidth
             />
             <Checkbox
-            id="public"
-          checked={isPublic}
-          onChange={e => this.setState({isPublic: e.target.value})}
-          value={"isPublic"}
-        />
-        <InputLabel
-          htmlFor="public"
-        >
-          Public Comment
+              id="public"
+              checked={isPublic}
+              onChange={e => this.setState({ isPublic: e.target.checked })}
+              value={"isPublic"}
+            />
+            <InputLabel
+              htmlFor="public"
+            >
+              Public
         </InputLabel>
           </DialogContent>
           <DialogActions>
