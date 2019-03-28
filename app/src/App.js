@@ -9,9 +9,7 @@ const App = () => (
   <CssBaseline>
     <DataProvider>
       <ThemeProvider>
-        <SnackbarProvider
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        >
+        <SnackbarProvider anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
           <TestPage />
         </SnackbarProvider>
       </ThemeProvider>
