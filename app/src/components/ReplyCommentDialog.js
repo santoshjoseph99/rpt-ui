@@ -54,7 +54,6 @@ export default class ReplyCommentDialog extends React.Component {
   }
 
   createError = (err) => {
-    console.log('ERROR:', err);
     window.alert(err);
   }
 
@@ -99,7 +98,7 @@ export default class ReplyCommentDialog extends React.Component {
               Cancel
             </Button>
             <Mutation mutation={CREATECOMMENT_MUTATION} onCompleted={this.createDone} onError={this.createError} variables={{ parentCommentId, message, isPublic }}>
-              {mutation => <Button onClick={mutation} color="primary">Reply</Button>}
+              {mutation => <Button variant="contained" onClick={mutation} color="primary">Reply</Button>}
             </Mutation>
           </DialogActions>
         </Dialog>

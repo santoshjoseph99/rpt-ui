@@ -39,20 +39,17 @@ export default class SignUpDialog extends React.Component {
   };
 
   signUpDone = (data) => {
-    console.log('DONE:', data);
     this.setState({ open: false });
     this.props.logIn({token: data.signup.token, user: data.signup.user });
   }
 
   signUpError = (err) => {
-    console.log('ERROR:', err);
     window.alert(err);
     this.props.logIn(false);
   }
 
   render() {
     const {email, password, name} = this.state;
-    // console.log('SIGNUP:', this.props);
     return (
       <div style={{marginRight: '10px'}}>
         <Button variant="contained" color="primary" onClick={this.handleClickOpen}>
@@ -79,7 +76,6 @@ export default class SignUpDialog extends React.Component {
               fullWidth
             />
             <TextField
-              autoFocus
               margin="dense"
               id="password"
               value={password}
@@ -89,7 +85,6 @@ export default class SignUpDialog extends React.Component {
               fullWidth
             />
             <TextField
-              autoFocus
               margin="dense"
               id="name"
               value={name}
@@ -104,7 +99,7 @@ export default class SignUpDialog extends React.Component {
               Cancel
             </Button>
             <Mutation mutation={SIGNUP_MUTATION} onCompleted={this.signUpDone} onError={this.signUpError} variables={{ email, password, name }}>
-              {signupMutation => <Button onClick={signupMutation} color="primary">Sign Up</Button>}
+              {signupMutation => <Button variant="contained" onClick={signupMutation} color="primary">Sign Up</Button>}
             </Mutation>
           </DialogActions>
         </Dialog>

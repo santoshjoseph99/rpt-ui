@@ -36,13 +36,11 @@ export default class LogInDialog extends React.Component {
   };
 
   loginDone = (data) => {
-    console.log('DONE:', data);
     this.setState({ open: false });
     this.props.logIn({token: data.login.token, user: data.login.user });
   }
 
   loginError = (err) => {
-    console.log('ERROR:', err);
     window.alert(err);
     this.props.logIn(false);
   }
@@ -87,7 +85,7 @@ export default class LogInDialog extends React.Component {
               Cancel
             </Button>
             <Mutation mutation={LOGIN_MUTATION} onCompleted={this.loginDone} onError={this.loginError} variables={{ email, password }}>
-              {loginMutation => <Button onClick={loginMutation} color="primary">Log In</Button>}
+              {loginMutation => <Button variant="contained" onClick={loginMutation} color="primary">Log In</Button>}
             </Mutation>
           </DialogActions>
         </Dialog>

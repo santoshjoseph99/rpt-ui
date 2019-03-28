@@ -4,7 +4,6 @@ import { compose } from 'recompose';
 import renderWhileLoading from '../utils/renderWhileLoading';
 
 const ListComments = ({comments,user, newComment, deletedCommentId, commentDeleted, onError, commentEdited}) => {
-  console.log('ListComments:', newComment, comments.length);
   let newcomments;
   if(deletedCommentId) {
     const index = comments.findIndex(x => x.id === deletedCommentId);

@@ -49,7 +49,6 @@ export default class CreateCommentDialog extends React.Component {
   }
 
   createError = (err) => {
-    console.log('ERROR:', err);
     window.alert(err);
   }
 

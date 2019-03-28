@@ -2,8 +2,8 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { compose } from 'recompose';
 import FeedData from '../containers/FeedData';
-// import FeedSubscriptionData from '../containers/FeedSubscriptionData';
-// import Notice from './Notice';
+import FeedSubscriptionData from '../containers/FeedSubscriptionData';
+import Notice from './Notice';
 import ListComments from './ListComments';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -11,6 +11,7 @@ import Button from '@material-ui/core/Button';
 import SignUpDialog from './SignUpDialog';
 import LogInDialog from './LogInDialog';
 import CreateCommentDialog from './CreateCommentDialog';
+import {AUTH_TOKEN} from '../utils/constants';
 
 const styles = theme => ({
   page: {
@@ -41,17 +42,10 @@ class TestPage extends React.Component {
       newComment: {},
       deletedCommentId: '',
     };
-    // this.logIn = this.logIn.bind(this);
-    // this.logOut = this.logOut.bind(this);
-    // this.commentEdited = this.commentEdited.bind(this);
-    // this.commentDeleted = this.commentDeleted.bind(this);
-    // this.commentCreated = this.commentCreated.bind(this);
-    // this.onError = this.onError.bind(this);
     //TODO: read JWT token
   }
 
   commentDeleted = (obj) => {
-    console.log('COMMENT DELTED:', obj);
     this.setState({
       deletedCommentId: obj.deleteComment.id,
       newComment: {},
@@ -74,7 +68,7 @@ class TestPage extends React.Component {
       });
     }
     if(value && value.token) {
-      localStorage.setItem('auth-token', value.token);
+      localStorage.setItem(AUTH_TOKEN, value.token);
     }
   }
 
@@ -83,7 +77,7 @@ class TestPage extends React.Component {
       loggedIn: false,
       user: {}
     });
-    localStorage.removeItem('auth-token');
+    localStorage.removeItem(AUTH_TOKEN);
   }
 
   commentCreated = (comment) => {
@@ -117,9 +111,9 @@ class TestPage extends React.Component {
           {loggedIn && <Button variant="outlined" color="primary" onClick={this.logOut}>Logout</Button>}
         </Toolbar>
       </AppBar>
-      {/* <FeedSubscriptionData>
+      <FeedSubscriptionData>
         {props => <Notice {...props} />}
-      </FeedSubscriptionData> */}
+      </FeedSubscriptionData>
       <FeedData {...newProps}>{props => <ListComments {...props} />}</FeedData>
     </div>
     );
