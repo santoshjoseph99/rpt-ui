@@ -14,6 +14,7 @@ const ListComments = ({comments,user, newComment, deletedCommentId, commentDelet
   }
   if (user.id) {
     newcomments = newcomments.filter(x => x.isPublic || x.author.id === user.id);
+    console.log('LOGGEDIN USER COMMENTS:', newcomments.filter(x => x.author.id === user.id));
   } else {
     newcomments = newcomments.filter(x => x.isPublic);
   }

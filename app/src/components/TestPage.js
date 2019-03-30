@@ -1,6 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { compose } from 'recompose';
+import { compose, withState } from 'recompose';
 import FeedData from '../containers/FeedData';
 import FeedSubscriptionData from '../containers/FeedSubscriptionData';
 import Notice from './Notice';
@@ -12,6 +12,9 @@ import SignUpDialog from './SignUpDialog';
 import LogInDialog from './LogInDialog';
 import CreateCommentDialog from './CreateCommentDialog';
 import {AUTH_TOKEN} from '../utils/constants';
+import CreateCommentDialog2 from './refactor/CreateCommentDialog';
+import EditCommentDialog from './refactor/EditCommentDialog';
+// import CommentDialog from './refactor/CommentDialog';
 
 const styles = theme => ({
   page: {
@@ -90,6 +93,7 @@ class TestPage extends React.Component {
   render() {
     const {classes} = this.props;
     const {loggedIn, newComment, deletedCommentId, user} = this.state;
+    // const EditDialog = EditCommentDialog('message', true);
     const newProps = {
       logIn: this.logIn,
       commentCreated: this.commentCreated,
@@ -105,9 +109,12 @@ class TestPage extends React.Component {
       <div className={classes.page}>
       <AppBar position="static" color="default" className={classes.appBar}>
         <Toolbar>
+          {/* <EditDialog></EditDialog> */}
+          {/* <CreateCommentDialog2 ></CreateCommentDialog2> */}
+          {/* <CreateCommentDialog2 {...newProps}></CreateCommentDialog2> */}
           {!loggedIn && <SignUpDialog {...newProps}></SignUpDialog>}
           {!loggedIn && <LogInDialog {...newProps}></LogInDialog>}
-          {loggedIn && <CreateCommentDialog {...newProps}></CreateCommentDialog>}
+          {loggedIn && <CreateCommentDialog2></CreateCommentDialog2>}
           {loggedIn && <Button variant="outlined" color="primary" onClick={this.logOut}>Logout</Button>}
         </Toolbar>
       </AppBar>

@@ -10,26 +10,23 @@ import Checkbox from '@material-ui/core/Checkbox';
 import InputLabel from '@material-ui/core/InputLabel';
 
 export default ({
-  buttonText,
   dialogTitle,
   mutationFn,
   mutationButtonText,
   open,
   message,
   isPublic,
+  parentCommentId,
   onChangeMessage,
   onChangeIsPublic,
-  handleClick,
-  createDone,
-  createError }) => {
+  handleClose,
+  mutationDone,
+  mutationError }) => {
   return (
     <div style={{ marginRight: '10px' }}>
-      <Button variant="contained" color="primary" onClick={handleClick}>
-        {buttonText}
-      </Button>
       <Dialog
         open={open}
-        onClose={handleClick}
+        onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
         <DialogTitle id="form-dialog-title">{dialogTitle}</DialogTitle>
@@ -53,10 +50,10 @@ export default ({
           <InputLabel htmlFor="public">Public Comment</InputLabel>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClick} color="primary">
+          <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Mutation mutation={mutationFn} onCompleted={createDone} onError={createError} variables={{ message: message.value, isPublic: isPublic.value }}>
+          <Mutation mutation={mutationFn} onCompleted={mutationDone} onError={mutationError} variables={{ message: message.value, isPublic: isPublic.value, parentCommentId }}>
             {mutation => <Button variant="contained" onClick={mutation} color="primary">{mutationButtonText}</Button>}
           </Mutation>
         </DialogActions>

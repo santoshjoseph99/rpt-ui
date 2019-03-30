@@ -1,37 +1,21 @@
 import { withState, withHandlers, withProps, compose } from 'recompose';
-import gql from 'graphql-tag';
 import CommentDialog from './CommentDialog';
 import CommentDialogFieldHandlers from './CommentDialogFieldHandlers';
+import { CREATECOMMENT_MUTATION } from '../../utils/mutations'
 
-const CREATECOMMENT_MUTATION = gql`
-mutation CreateCommentMutation($message: String!,
-  $isPublic: Boolean!,
-	$parentCommentId:ID) {
-  createComment(message: $message, isPublic:$isPublic, parentCommentId: $parentCommentId) {
-  	id,
-    createdAt,
-    updatedAt,
-    message,
-    author {
-    	name
-    }
-  }
-}
-`;
 
 const enhance = compose(
   withState('open', 'setOpen', false),
   withHandlers({
-    handleClick: props => event => props.setOpen(!props.open),
-    createDone: props => (data) => {
-      props.setOpen(!props.open);
+    handleClose: props => event => props.setOpen(false),
+    mutationDone: props => (data) => {
+      props.setOpen(false);
       props.commentCreated(data.createComment);
     },
-    createError: props => err => window.alert(err)
+    mutationError: props => err => window.alert(err)
   }),
-  CommentDialogFieldHandlers(),
+  CommentDialogFieldHandlers('', false),
   withProps({
-    buttonText: 'New Comment',
     mutationFn: CREATECOMMENT_MUTATION,
     mutationButtonText: 'Create',
     dialogTitle: 'New Comment'

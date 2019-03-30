@@ -13,62 +13,16 @@ import InputLabel from '@material-ui/core/InputLabel';
 import ReplyIcon from '@material-ui/icons/Reply';
 import IconButton from '@material-ui/core/IconButton';
 
-const CREATECOMMENT_MUTATION = gql`
-mutation ReplyCommentMutation($message: String!,
-  $isPublic: Boolean!,
-	$parentCommentId:ID) {
-  createComment(message: $message, isPublic:$isPublic, parentCommentId: $parentCommentId) {
-  	id,
-    createdAt,
-    updatedAt,
-    message,
-    author {
-      name,
-      id
-    }
-  }
-}
-`;
 
-export default class ReplyCommentDialog extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      open: false,
-      message: '',
-      isPublic: props.isPublic,
-      parentCommentId: props.parentCommentId,
-    };
-  }
-
-  handleClickOpen = () => {
-    this.setState({ open: true });
-  };
-
-  handleClose = () => {
-    this.setState({ open: false });
-  };
-
-  createDone = (data) => {
-    this.setState({ open: false, message: '' });
-  }
-
-  createError = (err) => {
-    window.alert(err);
-  }
-
-  render() {
-    const {message, isPublic, parentCommentId} = this.state;
-    console.log('REPLY:', parentCommentId)
+export default ({open, toggle, message, isPublic, parentCommentId, title}) => {
     return (
       <div style={{marginRight: '10px'}}>
-        <IconButton onClick={this.handleClickOpen}><ReplyIcon /></IconButton>
         <Dialog
-          open={this.state.open}
-          onClose={this.handleClose}
+          open={open}
+          onClose={toggle}
           aria-labelledby="form-dialog-title"
         >
-          <DialogTitle id="form-dialog-title">Reply</DialogTitle>
+          <DialogTitle id="form-dialog-title">{title}</DialogTitle>
           <DialogContentText>
           </DialogContentText>
           <DialogContent>

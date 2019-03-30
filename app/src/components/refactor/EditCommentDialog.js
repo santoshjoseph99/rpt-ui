@@ -1,40 +1,31 @@
 import { withState, withHandlers, withProps, compose } from 'recompose';
-import gql from 'graphql-tag';
 import CommentDialog from './CommentDialog';
 import CommentDialogFieldHandlers from './CommentDialogFieldHandlers';
+import { EDITCOMMENT_MUTATION } from '../../utils/mutations'
 
-const EDITCOMMENT_MUTATION = gql`
-mutation EditComment($id: ID!, $message:String, $isPublic: Boolean) {
-  editComment(id:$id, message:$message, isPublic:$isPublic){
-    id,
-  	message,
-    isPublic
-  }
-}
-`;
-
-const enhanceFn = function (message, isPublic){
+const enhanceFn = function (message, isPublic, id){
   return compose(
-  withState('open', 'setOpen', false),
-  withHandlers({
-    handleClick: props => event => props.setOpen(!props.open),
-    createDone: props => (data) => {
-      props.setOpen(!props.open);
-      props.commentEdited(data.createComment);
-    },
-    createError: props => err => window.alert(err)
-  }),
-  CommentDialogFieldHandlers(message, isPublic),
-  withProps({
-    buttonText: 'Edit Comment',
-    mutationFn: EDITCOMMENT_MUTATION,
-    mutationButtonText: 'Save',
-    dialogTitle: 'Edit Comment'
-  })
-);
+    withState('open', 'setOpen', true),
+    withHandlers({
+      handleClick: props => event => props.setOpen(!props.open),
+      createDone: props => (data) => {
+        props.setOpen(!props.open);
+        props.commentEdited(data.createComment);
+      },
+      createError: props => err => window.alert(err)
+    }),
+    CommentDialogFieldHandlers(message, isPublic),
+    withProps({
+      id: id,
+      buttonText: 'Edit Comment',
+      mutationFn: EDITCOMMENT_MUTATION,
+      mutationButtonText: 'Save',
+      dialogTitle: 'Edit Comment'
+    })
+  );
 }
 
-export default function (message, isPublic) {
-  const enhance = enhanceFn(message, isPublic);
+export default function (message, isPublic, id) {
+  const enhance = enhanceFn(message, isPublic, id);
   return enhance(CommentDialog);
 }
