@@ -12,7 +12,8 @@ import Checkbox from '@material-ui/core/Checkbox';
 import InputLabel from '@material-ui/core/InputLabel';
 
 const CREATECOMMENT_MUTATION = gql`
-mutation CreateCommentMutation($message: String!,
+mutation CreateCommentMutation(
+  $message: String!,
   $isPublic: Boolean!,
 	$parentCommentId:ID) {
   createComment(message: $message, isPublic:$isPublic, parentCommentId: $parentCommentId) {

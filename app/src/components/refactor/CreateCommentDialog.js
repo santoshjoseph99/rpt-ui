@@ -3,10 +3,10 @@ import CommentDialog from './CommentDialog';
 import CommentDialogFieldHandlers from './CommentDialogFieldHandlers';
 import { CREATECOMMENT_MUTATION } from '../../utils/mutations'
 
-
 const enhance = compose(
   withState('open', 'setOpen', false),
   withHandlers({
+    handleOpen: props => event => props.setOpen(true),
     handleClose: props => event => props.setOpen(false),
     mutationDone: props => (data) => {
       props.setOpen(false);
@@ -18,7 +18,7 @@ const enhance = compose(
   withProps({
     mutationFn: CREATECOMMENT_MUTATION,
     mutationButtonText: 'Create',
-    dialogTitle: 'New Comment'
+    dialogTitle: 'New Comment',
   })
 );
 

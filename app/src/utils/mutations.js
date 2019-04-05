@@ -11,7 +11,8 @@ export const CREATECOMMENT_MUTATION = gql`
       updatedAt,
       message,
       author {
-        name
+        name,
+        id
       }
     }
   }
@@ -26,6 +27,15 @@ export const EDITCOMMENT_MUTATION = gql`
       id,
       message,
       isPublic
+    }
+  }
+`;
+
+export const DELETECOMMENT_MUTATION = gql`
+  mutation DeleteComment($id: ID!) {
+    deleteComment(id:$id){
+      id,
+      message
     }
   }
 `;

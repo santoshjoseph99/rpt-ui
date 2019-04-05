@@ -59,7 +59,7 @@ export default class ReplyCommentDialog extends React.Component {
 
   render() {
     const {message, isPublic, parentCommentId} = this.state;
-    console.log('REPLY:', parentCommentId)
+    // console.log('REPLY:', parentCommentId)
     return (
       <div style={{marginRight: '10px'}}>
         <IconButton onClick={this.handleClickOpen}><ReplyIcon /></IconButton>

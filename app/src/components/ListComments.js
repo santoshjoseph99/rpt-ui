@@ -3,7 +3,16 @@ import Comment from './Comment';
 import { compose } from 'recompose';
 import renderWhileLoading from '../utils/renderWhileLoading';
 
-const ListComments = ({comments,user, newComment, deletedCommentId, commentDeleted, onError, commentEdited}) => {
+const ListComments = ({
+  comments,
+  user,
+  newComment,
+  deletedCommentId,
+  commentDeleted,
+  onError,
+  commentEdited,
+  loggedIn
+  }) => {
   let newcomments;
   if(deletedCommentId) {
     const index = comments.findIndex(x => x.id === deletedCommentId);
@@ -23,7 +32,7 @@ const ListComments = ({comments,user, newComment, deletedCommentId, commentDelet
     {newcomments &&
       newcomments.map(
       comment => {
-        const newProps = Object.assign({}, {commentDeleted, onError, commentEdited}, comment);
+        const newProps = Object.assign({}, {commentDeleted, onError, commentEdited, loggedIn}, comment);
         return <Comment key={comment.id} { ...newProps} />})
         }
   </Fragment>);

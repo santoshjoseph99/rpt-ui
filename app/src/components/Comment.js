@@ -8,20 +8,13 @@ import CardHeader from '@material-ui/core/CardHeader';
 import Typography from '@material-ui/core/Typography';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Avatar from '@material-ui/core/Avatar';
-import IconButton from '@material-ui/core/IconButton';
 import { Mutation } from 'react-apollo';
-import gql from 'graphql-tag';
-import EditCommentDialog from './EditCommentDialog';
-import ReplyCommentDialog from './ReplyCommentDialog';
-
-const DELETECOMMENT_MUTATION = gql`
-mutation DeleteComment($id: ID!) {
-  deleteComment(id:$id){
-    id,
-  	message
-  }
-}
-`;
+import editCommentDialog from './refactor/EditCommentDialog';
+import replyCommentDialog from './refactor/ReplyCommentDialog';
+import { DELETECOMMENT_MUTATION } from '../utils/mutations';
+import EditIcon from '@material-ui/icons/Edit';
+import ReplyIcon from '@material-ui/icons/Reply';
+import IconButton from '@material-ui/core/IconButton';
 
 const styles = theme => ({
   card: {
@@ -30,13 +23,45 @@ const styles = theme => ({
   }
 });
 
-const enhanced = compose(withStyles(styles));
+const enhanced = compose(
+  withStyles(styles),
+  // withHandlers({
+  //   handleEditOpen: props => event => {
+  //     const EditCommentDialog = editCommentDialog(props.message, props.isPublic, props.id);
+  //     console.log(props.message, props.isPublic, props.id);
+  //     EditCommentDialog();
+  //     // return <EditCommentDialog></EditCommentDialog>
+  //   },
+  // })
+);
 
 function formatter(str, a, b, c) {
   return `${str} ${a} ${b} ${c}`;
 }
 
-export default enhanced(({ classes, id, message, isPublic, createdAt, updatedAt, commentDeleted, onError }) => {
+export default enhanced(({
+  classes,
+  id,
+  message,
+  isPublic,
+  createdAt,
+  updatedAt,
+  commentDeleted,
+  onError,
+  loggedIn,
+}) => {
+  const renderBtnProp = {
+    renderBtn: (handleOpen) => {
+      return <IconButton onClick={handleOpen}><EditIcon /></IconButton>
+    }
+  };
+  const replyBtnProp = {
+    renderBtn: (handleOpen) => {
+      return <IconButton onClick={handleOpen}><ReplyIcon /></IconButton>
+    }
+  };
+  const EditCommentDialog = editCommentDialog(message, isPublic, id, renderBtnProp);
+  const ReplyCommentDialog = replyCommentDialog(message, isPublic, id, replyBtnProp);
   return (
   <Card className={classes.card}>
     <CardContent>
@@ -48,14 +73,14 @@ export default enhanced(({ classes, id, message, isPublic, createdAt, updatedAt,
         }
         action={
           <div>
-            <Mutation mutation={DELETECOMMENT_MUTATION} onCompleted={commentDeleted} onError={onError} variables={{ id }}>
+            {loggedIn && <Mutation mutation={DELETECOMMENT_MUTATION} onCompleted={commentDeleted} onError={onError} variables={{ id }}>
               {mutation =>
                 <IconButton onClick={mutation}>
                   <DeleteIcon />
                 </IconButton>
               }
-            </Mutation>
-            <EditCommentDialog id={id} message={message} isPublic={!!isPublic}/>
+            </Mutation>}
+            {loggedIn && <EditCommentDialog></EditCommentDialog>}
           </div>
         }
         title=""
@@ -67,7 +92,7 @@ export default enhanced(({ classes, id, message, isPublic, createdAt, updatedAt,
       </Typography>
       <Typography variant="h5" component="h2">
         {message}
-        <ReplyCommentDialog parentCommentId={id} message={message} isPublic={!!isPublic}/>
+        {loggedIn && <ReplyCommentDialog renderBtn={replyBtnProp} parentCommentId={id} message={message} isPublic={!!isPublic}/>}
       </Typography>
     </CardContent>
   </Card>)

@@ -1,6 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { compose, withState } from 'recompose';
+import { compose } from 'recompose';
 import FeedData from '../containers/FeedData';
 import FeedSubscriptionData from '../containers/FeedSubscriptionData';
 import Notice from './Notice';
@@ -10,11 +10,13 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
 import SignUpDialog from './SignUpDialog';
 import LogInDialog from './LogInDialog';
-import CreateCommentDialog from './CreateCommentDialog';
+// import CreateCommentDialog from './CreateCommentDialog';
 import {AUTH_TOKEN} from '../utils/constants';
-import CreateCommentDialog2 from './refactor/CreateCommentDialog';
-import EditCommentDialog from './refactor/EditCommentDialog';
+import CreateCommentDialog from './refactor/CreateCommentDialog';
+// import EditCommentDialog from './refactor/EditCommentDialog';
 // import CommentDialog from './refactor/CommentDialog';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
 
 const styles = theme => ({
   page: {
@@ -31,7 +33,13 @@ const styles = theme => ({
   },
   hide: {
     display: 'none'
-  }
+  },
+  fab: {
+    position: 'absolute',
+    bottom: 0,
+    // bottom: theme.spacing.unit * 2,
+    right: theme.spacing.unit * 2,
+  },
 });
 
 const enhanced = compose(withStyles(styles));
@@ -105,16 +113,25 @@ class TestPage extends React.Component {
       loggedIn: loggedIn,
       user: user
     };
+    const renderBtnProp = {
+      renderBtn: (handleOpen) => {
+        return (<Fab className={classes.fab} color="primary" onClick={handleOpen}>
+              <AddIcon />
+            </Fab>);
+      }
+    }
+    const createCommentDialogProps = Object.assign({}, newProps, renderBtnProp)
+    /*
+    TODO: better colors/styles for comment box
+    */
     return (
       <div className={classes.page}>
       <AppBar position="static" color="default" className={classes.appBar}>
         <Toolbar>
           {/* <EditDialog></EditDialog> */}
-          {/* <CreateCommentDialog2 ></CreateCommentDialog2> */}
-          {/* <CreateCommentDialog2 {...newProps}></CreateCommentDialog2> */}
           {!loggedIn && <SignUpDialog {...newProps}></SignUpDialog>}
           {!loggedIn && <LogInDialog {...newProps}></LogInDialog>}
-          {loggedIn && <CreateCommentDialog2></CreateCommentDialog2>}
+          {loggedIn &&  <CreateCommentDialog {...createCommentDialogProps}></CreateCommentDialog>}
           {loggedIn && <Button variant="outlined" color="primary" onClick={this.logOut}>Logout</Button>}
         </Toolbar>
       </AppBar>

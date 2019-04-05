@@ -10,12 +10,15 @@ import Checkbox from '@material-ui/core/Checkbox';
 import InputLabel from '@material-ui/core/InputLabel';
 
 export default ({
+  handleOpen,
+  renderBtn,
   dialogTitle,
   mutationFn,
   mutationButtonText,
   open,
   message,
   isPublic,
+  id,
   parentCommentId,
   onChangeMessage,
   onChangeIsPublic,
@@ -24,6 +27,7 @@ export default ({
   mutationError }) => {
   return (
     <div style={{ marginRight: '10px' }}>
+      {renderBtn && renderBtn(handleOpen)}
       <Dialog
         open={open}
         onClose={handleClose}
@@ -53,7 +57,10 @@ export default ({
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Mutation mutation={mutationFn} onCompleted={mutationDone} onError={mutationError} variables={{ message: message.value, isPublic: isPublic.value, parentCommentId }}>
+          <Mutation mutation={mutationFn}
+                    onCompleted={mutationDone}
+                    onError={mutationError}
+                    variables={{ message: message.value, isPublic: isPublic.value, parentCommentId, id }}>
             {mutation => <Button variant="contained" onClick={mutation} color="primary">{mutationButtonText}</Button>}
           </Mutation>
         </DialogActions>
