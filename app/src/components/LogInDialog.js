@@ -6,20 +6,9 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Mutation } from 'react-apollo';
-import gql from 'graphql-tag';
+import { LOGIN_MUTATION } from '../utils/mutations';
 
-const LOGIN_MUTATION = gql`
-mutation LoginMutation($email: String!, $password: String!) {
-  login(email: $email, password:$password) {
-    token,
-    user {
-      id,
-      email,
-      name
-    }
-  }
-}
-`;
+
 export default class LogInDialog extends React.Component {
   state = {
     open: false,

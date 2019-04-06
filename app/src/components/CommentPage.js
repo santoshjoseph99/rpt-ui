@@ -10,11 +10,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
 import SignUpDialog from './SignUpDialog';
 import LogInDialog from './LogInDialog';
-// import CreateCommentDialog from './CreateCommentDialog';
 import {AUTH_TOKEN} from '../utils/constants';
 import CreateCommentDialog from './refactor/CreateCommentDialog';
-// import EditCommentDialog from './refactor/EditCommentDialog';
-// import CommentDialog from './refactor/CommentDialog';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 
@@ -37,14 +34,13 @@ const styles = theme => ({
   fab: {
     position: 'absolute',
     bottom: 0,
-    // bottom: theme.spacing.unit * 2,
     right: theme.spacing.unit * 2,
   },
 });
 
 const enhanced = compose(withStyles(styles));
 
-class TestPage extends React.Component {
+class CommentPage extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -63,9 +59,9 @@ class TestPage extends React.Component {
     });
   }
 
-  commentEdited(id, message, isPublic) {
+  // commentEdited(id, message, isPublic) {
 
-  }
+  // }
 
   onError = (msg) => {
     window.alert(msg);
@@ -101,7 +97,6 @@ class TestPage extends React.Component {
   render() {
     const {classes} = this.props;
     const {loggedIn, newComment, deletedCommentId, user} = this.state;
-    // const EditDialog = EditCommentDialog('message', true);
     const newProps = {
       logIn: this.logIn,
       commentCreated: this.commentCreated,
@@ -123,12 +118,19 @@ class TestPage extends React.Component {
     const createCommentDialogProps = Object.assign({}, newProps, renderBtnProp)
     /*
     TODO: better colors/styles for comment box
+    TODO: combine signup & login dialogs
+    TODO: show replied comments
+    TODO: unit tests
+    TODO: redux (or other state management)
+    TODO: show errors on dialog box?
+    TODO: only enable action if dialogbox is filled out
+    TODO: show logged in user if JWT token is available
+    TODO: create README to describe choices and architecture
     */
     return (
       <div className={classes.page}>
       <AppBar position="static" color="default" className={classes.appBar}>
         <Toolbar>
-          {/* <EditDialog></EditDialog> */}
           {!loggedIn && <SignUpDialog {...newProps}></SignUpDialog>}
           {!loggedIn && <LogInDialog {...newProps}></LogInDialog>}
           {loggedIn &&  <CreateCommentDialog {...createCommentDialogProps}></CreateCommentDialog>}
@@ -143,4 +145,4 @@ class TestPage extends React.Component {
     );
   }
 }
-export default enhanced(TestPage);
+export default enhanced(CommentPage);
