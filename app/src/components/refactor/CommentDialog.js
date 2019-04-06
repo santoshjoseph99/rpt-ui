@@ -26,7 +26,7 @@ export default ({
   mutationDone,
   mutationError }) => {
   return (
-    <div style={{ marginRight: '10px' }}>
+    <div style={{ display: 'inline' }}>
       {renderBtn && renderBtn(handleOpen)}
       <Dialog
         open={open}

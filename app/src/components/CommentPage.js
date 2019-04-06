@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { compose } from 'recompose';
 import FeedData from '../containers/FeedData';
@@ -10,10 +10,11 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
 import SignUpDialog from './SignUpDialog';
 import LogInDialog from './LogInDialog';
-import {AUTH_TOKEN} from '../utils/constants';
+import {AUTH_USER, AUTH_TOKEN} from '../utils/constants';
 import CreateCommentDialog from './refactor/CreateCommentDialog';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
+import Comment from './Comment';
 
 const styles = theme => ({
   page: {
@@ -36,6 +37,9 @@ const styles = theme => ({
     bottom: 0,
     right: theme.spacing.unit * 2,
   },
+  name: {
+   marginLeft: 10,
+  }
 });
 
 const enhanced = compose(withStyles(styles));
@@ -49,7 +53,21 @@ class CommentPage extends React.Component {
       newComment: {},
       deletedCommentId: '',
     };
-    //TODO: read JWT token
+  }
+
+  componentDidMount() {
+    const user = JSON.parse(localStorage.getItem(AUTH_USER));
+    if(user) {
+      this.setState({
+        user
+      });
+    }
+    const token = localStorage.getItem(AUTH_TOKEN);
+    if(token){
+      this.setState({
+        loggedIn: true
+      });
+    }
   }
 
   commentDeleted = (obj) => {
@@ -60,7 +78,6 @@ class CommentPage extends React.Component {
   }
 
   // commentEdited(id, message, isPublic) {
-
   // }
 
   onError = (msg) => {
@@ -74,7 +91,8 @@ class CommentPage extends React.Component {
         user: value.user
       });
     }
-    if(value && value.token) {
+    if(value) {
+      localStorage.setItem(AUTH_USER, JSON.stringify(value.user));
       localStorage.setItem(AUTH_TOKEN, value.token);
     }
   }
@@ -84,6 +102,7 @@ class CommentPage extends React.Component {
       loggedIn: false,
       user: {}
     });
+    localStorage.removeItem(AUTH_USER);
     localStorage.removeItem(AUTH_TOKEN);
   }
 
@@ -92,6 +111,10 @@ class CommentPage extends React.Component {
       newComment: comment,
       deletedCommentId: '',
     })
+  }
+
+  createComment = (comment) => {
+    return <Comment {...comment}></Comment>;
   }
 
   render() {
@@ -106,7 +129,8 @@ class CommentPage extends React.Component {
       commentEdited: this.commentEdited,
       onError: this.onError,
       loggedIn: loggedIn,
-      user: user
+      user: user,
+      createComment: this.createComment,
     };
     const renderBtnProp = {
       renderBtn: (handleOpen) => {
@@ -117,31 +141,41 @@ class CommentPage extends React.Component {
     }
     const createCommentDialogProps = Object.assign({}, newProps, renderBtnProp)
     /*
-    TODO: better colors/styles for comment box
+    TODO: truncate comment length
     TODO: combine signup & login dialogs
-    TODO: show replied comments
+    TODO: dialog forms valiation only enable action if dialogbox is filled out
+    TODO: show errors on dialog box
     TODO: unit tests
-    TODO: redux (or other state management)
-    TODO: show errors on dialog box?
-    TODO: only enable action if dialogbox is filled out
-    TODO: show logged in user if JWT token is available
     TODO: create README to describe choices and architecture
+    TODO: redux (or unistore)
     */
+
     return (
       <div className={classes.page}>
-      <AppBar position="static" color="default" className={classes.appBar}>
-        <Toolbar>
-          {!loggedIn && <SignUpDialog {...newProps}></SignUpDialog>}
-          {!loggedIn && <LogInDialog {...newProps}></LogInDialog>}
-          {loggedIn &&  <CreateCommentDialog {...createCommentDialogProps}></CreateCommentDialog>}
-          {loggedIn && <Button variant="outlined" color="primary" onClick={this.logOut}>Logout</Button>}
-        </Toolbar>
-      </AppBar>
-      <FeedSubscriptionData>
-        {props => <Notice {...props} />}
-      </FeedSubscriptionData>
-      <FeedData {...newProps}>{props => <ListComments {...props} />}</FeedData>
-    </div>
+        <AppBar position="static" color="default" className={classes.appBar}>
+          <Toolbar>
+            {!loggedIn &&
+              <Fragment>
+                <SignUpDialog {...newProps}></SignUpDialog>
+                <LogInDialog {...newProps}></LogInDialog>
+              </Fragment>
+            }
+            {loggedIn &&
+              <Fragment>
+                <Button variant="outlined" color="primary" onClick={this.logOut}>Logout</Button>
+                <span className={classes.name}>Hi {user.name}</span>
+                <CreateCommentDialog {...createCommentDialogProps}></CreateCommentDialog>
+              </Fragment>
+            }
+          </Toolbar>
+        </AppBar>
+        <FeedSubscriptionData>
+          {props => <Notice {...props} />}
+        </FeedSubscriptionData>
+        <FeedData {...newProps}>
+          {props => <ListComments {...props} />}
+        </FeedData>
+      </div>
     );
   }
 }

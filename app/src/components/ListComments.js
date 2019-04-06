@@ -11,6 +11,7 @@ const ListComments = ({
   commentDeleted,
   onError,
   commentEdited,
+  createComment,
   loggedIn
   }) => {
   let newcomments;
@@ -32,7 +33,7 @@ const ListComments = ({
     {newcomments &&
       newcomments.map(
       comment => {
-        const newProps = Object.assign({}, {commentDeleted, onError, commentEdited, loggedIn}, comment);
+        const newProps = Object.assign({}, {createComment, commentDeleted, onError, commentEdited, loggedIn}, comment);
         return <Comment key={comment.id} { ...newProps} />})
         }
   </Fragment>);

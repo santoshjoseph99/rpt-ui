@@ -1,5 +1,5 @@
-import React from 'react';
-import { compose } from 'recompose';
+import React, { Fragment } from 'react';
+import { compose, withState, withHandlers } from 'recompose';
 import TimeAgo from 'react-timeago';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -15,24 +15,65 @@ import { DELETECOMMENT_MUTATION } from '../utils/mutations';
 import EditIcon from '@material-ui/icons/Edit';
 import ReplyIcon from '@material-ui/icons/Reply';
 import IconButton from '@material-ui/core/IconButton';
+import Collapse from '@material-ui/core/Collapse';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import classnames from 'classnames';
+import { Query } from 'react-apollo';
+import gql from "graphql-tag";
+import Loading from './Loading';
+
+const GET_COMMENT = gql`
+  query GetComment($id:ID!){
+    comment(id:$id){
+      id,
+      message,
+      isPublic,
+      createdAt,
+      updatedAt,
+      author{
+        id,
+        name
+      },
+      parent {
+        id
+      },
+      children {
+        id
+      }
+    }
+  }
+`;
 
 const styles = theme => ({
   card: {
     margin: theme.spacing.unit * 2,
-    maxWidth: 400
-  }
+    maxWidth: 400,
+    boxShadow: "3px 3px 3px darkgrey",
+    "&:hover": {
+      transform: "scale(1.05)"
+    }
+  },
+  button: {
+    display: 'inline'
+  },
+  expand: {
+    transform: 'rotate(0deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
+      duration: theme.transitions.duration.shortest,
+    }),
+  },
+  expandOpen: {
+    transform: 'rotate(180deg)',
+  },
 });
 
 const enhanced = compose(
   withStyles(styles),
-  // withHandlers({
-  //   handleEditOpen: props => event => {
-  //     const EditCommentDialog = editCommentDialog(props.message, props.isPublic, props.id);
-  //     console.log(props.message, props.isPublic, props.id);
-  //     EditCommentDialog();
-  //     // return <EditCommentDialog></EditCommentDialog>
-  //   },
-  // })
+  withState('expanded', 'setExpanded', false),
+  withHandlers({
+    handleExpandClick: props => event => props.setExpanded(!props.expanded)
+  })
 );
 
 function formatter(str, a, b, c) {
@@ -44,56 +85,92 @@ export default enhanced(({
   id,
   message,
   isPublic,
+  children,
   createdAt,
   updatedAt,
   commentDeleted,
   onError,
   loggedIn,
+  expanded,
+  handleExpandClick,
+  createComment
 }) => {
+  if(children && children.length > 0) {
+    console.log("COMMENT", id, children.length);
+  }
   const renderBtnProp = {
     renderBtn: (handleOpen) => {
-      return <IconButton onClick={handleOpen}><EditIcon /></IconButton>
+      return <IconButton onClick={handleOpen}><EditIcon color="primary"/></IconButton>
     }
   };
   const replyBtnProp = {
     renderBtn: (handleOpen) => {
-      return <IconButton onClick={handleOpen}><ReplyIcon /></IconButton>
+      return <IconButton onClick={handleOpen}><ReplyIcon color="action"/></IconButton>
     }
   };
   const EditCommentDialog = editCommentDialog(message, isPublic, id, renderBtnProp);
   const ReplyCommentDialog = replyCommentDialog(message, isPublic, id, replyBtnProp);
   return (
-  <Card className={classes.card}>
-    <CardContent>
-      <CardHeader
-        avatar={
-          <Avatar aria-label="Recipe" className={classes.avatar}>
-            {isPublic ? 'P' : ''}
-            </Avatar>
-        }
-        action={
-          <div>
-            {loggedIn && <Mutation mutation={DELETECOMMENT_MUTATION} onCompleted={commentDeleted} onError={onError} variables={{ id }}>
+    <Card className={classes.card}>
+      <CardContent>
+        <CardHeader
+          avatar={
+            <Avatar aria-label="Recipe" className={classes.avatar}>
+              {isPublic ? 'P' : ''}
+              </Avatar>
+          }
+          title=""
+          subheader=""
+        />
+        <Typography variant="subtitle1" color="textSecondary" gutterBottom>
+          <TimeAgo date={createdAt} formatter={formatter.bind(this, "created")}/>
+          <TimeAgo date={updatedAt} formatter={formatter.bind(this, "/updated")}/>
+        </Typography>
+        <Typography variant="h5" component="h2">
+          {message}
+        </Typography>
+        {loggedIn &&
+          <Fragment>
+            <ReplyCommentDialog className={classes.button} renderBtn={replyBtnProp} parentCommentId={id} message={message} isPublic={!!isPublic}/>
+            <Mutation mutation={DELETECOMMENT_MUTATION} onCompleted={commentDeleted} onError={onError} variables={{ id }}>
               {mutation =>
-                <IconButton onClick={mutation}>
-                  <DeleteIcon />
+                <IconButton  className={classes.button} onClick={mutation}>
+                  <DeleteIcon color="secondary" />
                 </IconButton>
-              }
-            </Mutation>}
-            {loggedIn && <EditCommentDialog></EditCommentDialog>}
-          </div>
+            }
+            </Mutation>
+            <EditCommentDialog className={classes.button}></EditCommentDialog>
+            {children && children.length > 0 && <IconButton
+            className={classnames(classes.expand, {
+              [classes.expandOpen]: expanded,
+            })}
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
+            aria-label="Show more"
+          >
+            <ExpandMoreIcon />
+          </IconButton>}
+          </Fragment>
         }
-        title=""
-        subheader=""
-      />
-      <Typography variant="subtitle1" color="textSecondary" gutterBottom>
-        <TimeAgo date={createdAt} formatter={formatter.bind(this, "created")}/>
-        <TimeAgo date={updatedAt} formatter={formatter.bind(this, "/updated")}/>
-      </Typography>
-      <Typography variant="h5" component="h2">
-        {message}
-        {loggedIn && <ReplyCommentDialog renderBtn={replyBtnProp} parentCommentId={id} message={message} isPublic={!!isPublic}/>}
-      </Typography>
-    </CardContent>
-  </Card>)
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+        { children && children.length > 0 &&
+          <Query query={GET_COMMENT} variables={{ id: children[0].id }}>
+            {({ loading, error, data }) => {
+              console.log(loading, error, data);
+              if (loading) return <Loading></Loading>;
+              if (error) return `Error!: ${error}`;
+              const d = Object.assign({}, data.comment, {commentDeleted,
+                onError,
+                loggedIn,
+                expanded,
+                handleExpandClick,
+                createComment})
+              return createComment(d);
+            }}
+          </Query>
+        }
+        </Collapse>
+      </CardContent>
+    </Card>
+  );
 });
