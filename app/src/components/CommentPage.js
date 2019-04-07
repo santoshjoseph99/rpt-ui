@@ -8,8 +8,8 @@ import ListComments from './ListComments';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
-import SignUpDialog from './SignUpDialog';
-import LogInDialog from './LogInDialog';
+import SignUpDialog from './refactor/SignUpDialog';
+import LogInDialog from './refactor/LogInDialog';
 import {AUTH_USER, AUTH_TOKEN} from '../utils/constants';
 import CreateCommentDialog from './refactor/CreateCommentDialog';
 import Fab from '@material-ui/core/Fab';
@@ -57,7 +57,11 @@ class CommentPage extends React.Component {
   }
 
   componentDidMount() {
-    const user = JSON.parse(localStorage.getItem(AUTH_USER));
+    const userJson = localStorage.getItem(AUTH_USER);
+    if(!userJson) {
+      return;
+    }
+    const user = JSON.parse(userJson);
     if(user) {
       this.setState({
         user
@@ -85,7 +89,7 @@ class CommentPage extends React.Component {
     window.alert(msg);
   }
 
-  logIn = (value) => {
+  userDone = (value) => {
     if(value && value.user) {
       this.setState({
         loggedIn: true,
@@ -128,7 +132,7 @@ class CommentPage extends React.Component {
     const {classes} = this.props;
     const {loggedIn, newComment, deletedCommentId, user, repliedComment} = this.state;
     const newProps = {
-      logIn: this.logIn,
+      userDone: this.userDone,
       commentCreated: this.commentCreated,
       newComment,
       deletedCommentId,
@@ -145,7 +149,11 @@ class CommentPage extends React.Component {
       renderBtn: (handleOpen) =>
         <Fab className={classes.fab} color="primary" onClick={handleOpen}><AddIcon /></Fab>
     }
-    const createCommentDialogProps = Object.assign({}, newProps, renderBtnProp)
+    const createCommentDialogProps = Object.assign({}, newProps, renderBtnProp);
+    const loginBtn = (handleOpen) => <Button variant="outlined" color="primary" onClick={handleOpen}>Log In</Button>
+    const signUpBtn = (handleOpen) => <Button variant="contained" color="primary" onClick={handleOpen}>Sign Up</Button>
+    const loginDialogProps = Object.assign({}, newProps, {renderBtn: loginBtn});
+    const signUpDialogProps = Object.assign({}, newProps, {renderBtn: signUpBtn});
 
     return (
       <div className={classes.page}>
@@ -153,8 +161,8 @@ class CommentPage extends React.Component {
           <Toolbar>
             {!loggedIn &&
               <Fragment>
-                <SignUpDialog {...newProps}></SignUpDialog>
-                <LogInDialog {...newProps}></LogInDialog>
+                <SignUpDialog {...signUpDialogProps}></SignUpDialog>
+                <LogInDialog {...loginDialogProps}></LogInDialog>
               </Fragment>
             }
             {loggedIn &&
