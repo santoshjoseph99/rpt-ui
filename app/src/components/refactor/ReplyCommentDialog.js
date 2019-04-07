@@ -10,7 +10,7 @@ const enhanceFn = function (message, isPublic, id, renderBtnProp){
       handleClose: props => event => props.setOpen(false),
       mutationDone: props => (data) => {
         props.setOpen(!props.open);
-        // props.commentEdited(data.createComment);
+        props.commentReplied(data.createComment);
       },
       mutationError: props => err => window.alert(err)
     }),

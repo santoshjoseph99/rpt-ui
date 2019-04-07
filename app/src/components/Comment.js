@@ -19,7 +19,7 @@ import Collapse from '@material-ui/core/Collapse';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import classnames from 'classnames';
 import { Query } from 'react-apollo';
-import gql from "graphql-tag";
+import gql from 'graphql-tag';
 import Loading from './Loading';
 
 const GET_COMMENT = gql`
@@ -50,8 +50,10 @@ const styles = theme => ({
     maxWidth: 400,
     boxShadow: "3px 3px 3px darkgrey",
     "&:hover": {
-      transform: "scale(1.05)"
-    }
+      transform: "scale(1.01)"
+    },
+    borderLeft: "darkgray solid 1px",
+    borderTop: "darkgray solid 1px",
   },
   button: {
     display: 'inline'
@@ -66,6 +68,22 @@ const styles = theme => ({
   expandOpen: {
     transform: 'rotate(180deg)',
   },
+  multilineEllipsis: {
+    position: 'relative'
+  },
+  'multilineEllipsis::after': {
+    background: 'inherit',
+    bottom: 0,
+    content: '...',
+    marginRight: 1.0,
+    position: 'absolute',
+    right: 0,
+    textAlign: 'right',
+    width: 1,
+  },
+  truncate: {
+    'line-clamp': 2,
+  }
 });
 
 const enhanced = compose(
@@ -93,11 +111,9 @@ export default enhanced(({
   loggedIn,
   expanded,
   handleExpandClick,
-  createComment
+  createComment,
+  commentReplied,
 }) => {
-  if(children && children.length > 0) {
-    console.log("COMMENT", id, children.length);
-  }
   const renderBtnProp = {
     renderBtn: (handleOpen) => {
       return <IconButton onClick={handleOpen}><EditIcon color="primary"/></IconButton>
@@ -126,48 +142,55 @@ export default enhanced(({
           <TimeAgo date={createdAt} formatter={formatter.bind(this, "created")}/>
           <TimeAgo date={updatedAt} formatter={formatter.bind(this, "/updated")}/>
         </Typography>
-        <Typography variant="h5" component="h2">
+        <Typography variant="body1" component="h5" className={classes.truncate}>
           {message}
         </Typography>
         {loggedIn &&
           <Fragment>
-            <ReplyCommentDialog className={classes.button} renderBtn={replyBtnProp} parentCommentId={id} message={message} isPublic={!!isPublic}/>
+            <ReplyCommentDialog className={classes.button} commentReplied={commentReplied} renderBtn={replyBtnProp} parentCommentId={id} message={message} isPublic={!!isPublic}/>
             <Mutation mutation={DELETECOMMENT_MUTATION} onCompleted={commentDeleted} onError={onError} variables={{ id }}>
               {mutation =>
-                <IconButton  className={classes.button} onClick={mutation}>
+                <IconButton className={classes.button} onClick={mutation}>
                   <DeleteIcon color="secondary" />
                 </IconButton>
             }
             </Mutation>
             <EditCommentDialog className={classes.button}></EditCommentDialog>
-            {children && children.length > 0 && <IconButton
-            className={classnames(classes.expand, {
-              [classes.expandOpen]: expanded,
-            })}
-            onClick={handleExpandClick}
-            aria-expanded={expanded}
-            aria-label="Show more"
-          >
-            <ExpandMoreIcon />
-          </IconButton>}
+            {
+              children && children.length > 0 &&
+              <IconButton
+                className={classnames(classes.expand, {
+                  [classes.expandOpen]: expanded,
+                })}
+                onClick={handleExpandClick}
+                aria-expanded={expanded}
+                aria-label="Show more"
+              >
+                <ExpandMoreIcon />
+              </IconButton>
+            }
           </Fragment>
         }
         <Collapse in={expanded} timeout="auto" unmountOnExit>
-        { children && children.length > 0 &&
-          <Query query={GET_COMMENT} variables={{ id: children[0].id }}>
-            {({ loading, error, data }) => {
-              console.log(loading, error, data);
-              if (loading) return <Loading></Loading>;
-              if (error) return `Error!: ${error}`;
-              const d = Object.assign({}, data.comment, {commentDeleted,
-                onError,
-                loggedIn,
-                expanded,
-                handleExpandClick,
-                createComment})
-              return createComment(d);
-            }}
-          </Query>
+        {
+          children && children.map(c =>
+            <Query key={c.id} query={GET_COMMENT} variables={{ id: c.id }}>
+              {({ loading, error, data }) => {
+                if (loading) return <Loading></Loading>;
+                if (error) return `Error!: ${error}`;
+                const d = Object.assign({}, data.comment, {
+                  commentDeleted,
+                  onError,
+                  loggedIn,
+                  expanded,
+                  handleExpandClick,
+                  commentReplied,
+                  createComment
+                });
+                return createComment(d);
+              }}
+            </Query>
+          )
         }
         </Collapse>
       </CardContent>

@@ -13,6 +13,12 @@ export const CREATECOMMENT_MUTATION = gql`
       author {
         name,
         id
+      },
+      children {
+        id,
+      },
+      parent {
+        id
       }
     }
   }

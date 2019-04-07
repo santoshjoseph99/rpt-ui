@@ -52,6 +52,7 @@ class CommentPage extends React.Component {
       user: {},
       newComment: {},
       deletedCommentId: '',
+      repliedComment: {},
     };
   }
 
@@ -113,34 +114,41 @@ class CommentPage extends React.Component {
     })
   }
 
+  commentReplied = (comment) => {
+    this.setState({
+      repliedComment: comment,
+    })
+  }
+
   createComment = (comment) => {
-    return <Comment {...comment}></Comment>;
+    return <Comment key={comment.id} {...comment}></Comment>;
   }
 
   render() {
     const {classes} = this.props;
-    const {loggedIn, newComment, deletedCommentId, user} = this.state;
+    const {loggedIn, newComment, deletedCommentId, user, repliedComment} = this.state;
     const newProps = {
       logIn: this.logIn,
       commentCreated: this.commentCreated,
-      newComment: newComment,
-      deletedCommentId: deletedCommentId,
+      newComment,
+      deletedCommentId,
       commentDeleted: this.commentDeleted,
       commentEdited: this.commentEdited,
       onError: this.onError,
-      loggedIn: loggedIn,
-      user: user,
+      loggedIn,
+      user,
       createComment: this.createComment,
+      commentReplied: this.commentReplied,
+      repliedComment,
     };
     const renderBtnProp = {
-      renderBtn: (handleOpen) => {
-        return (<Fab className={classes.fab} color="primary" onClick={handleOpen}>
-              <AddIcon />
-            </Fab>);
-      }
+      renderBtn: (handleOpen) =>
+        <Fab className={classes.fab} color="primary" onClick={handleOpen}><AddIcon /></Fab>
     }
     const createCommentDialogProps = Object.assign({}, newProps, renderBtnProp)
     /*
+    TODO: multiple loading indictors for child comments on expansion
+    TODO: replying does not show the new comment!
     TODO: truncate comment length
     TODO: combine signup & login dialogs
     TODO: dialog forms valiation only enable action if dialogbox is filled out
@@ -148,6 +156,7 @@ class CommentPage extends React.Component {
     TODO: unit tests
     TODO: create README to describe choices and architecture
     TODO: redux (or unistore)
+    TODO: pagination
     */
 
     return (
