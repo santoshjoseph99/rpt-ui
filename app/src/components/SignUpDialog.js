@@ -7,20 +7,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Mutation } from 'react-apollo';
-import gql from 'graphql-tag';
+import { SIGNUP_MUTATION } from '../utils/mutations';
 
-const SIGNUP_MUTATION = gql`
-mutation PostMutation($email: String!, $password: String!, $name:String!) {
-  signup(email: $email, password:$password, name:$name) {
-    token,
-    user {
-      id,
-      email,
-      name
-    }
-  }
-}
-`;
 
 export default class SignUpDialog extends React.Component {
   state = {

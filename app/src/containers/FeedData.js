@@ -12,6 +12,12 @@ const query = gql`
       updatedAt
       author {
         id
+      },
+      parent {
+        id
+      },
+      children {
+        id
       }
     }
   }
