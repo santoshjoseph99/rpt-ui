@@ -146,18 +146,6 @@ class CommentPage extends React.Component {
         <Fab className={classes.fab} color="primary" onClick={handleOpen}><AddIcon /></Fab>
     }
     const createCommentDialogProps = Object.assign({}, newProps, renderBtnProp)
-    /*
-    TODO: multiple loading indictors for child comments on expansion
-    TODO: replying does not show the new comment!
-    TODO: truncate comment length
-    TODO: combine signup & login dialogs
-    TODO: dialog forms valiation only enable action if dialogbox is filled out
-    TODO: show errors on dialog box
-    TODO: unit tests
-    TODO: create README to describe choices and architecture
-    TODO: redux (or unistore)
-    TODO: pagination
-    */
 
     return (
       <div className={classes.page}>
