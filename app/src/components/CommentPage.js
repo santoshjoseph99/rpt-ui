@@ -82,9 +82,6 @@ class CommentPage extends React.Component {
     });
   }
 
-  // commentEdited(id, message, isPublic) {
-  // }
-
   onError = (msg) => {
     window.alert(msg);
   }
